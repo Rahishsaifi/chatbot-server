@@ -52,18 +52,19 @@ class AzureAIService {
         };
       }).filter(msg => msg.content); // Filter out empty messages
 
-      // Azure AI Foundry API call
-      // Supports OpenAI-compatible endpoint format
-      // Endpoint format: https://{resource-name}.openai.azure.com/openai/deployments/{deployment-name}/chat/completions?api-version={api-version}
-      // Or custom endpoint format if provided by user
+      // Azure AI Foundry API call (Format 2 with Authorization Bearer)
+      // Final endpoint format:
+      //   https://{resource}.services.ai.azure.com/api/projects/{project-id}/openai/deployments/{deployment-name}/chat/completions?api-version=2024-02-15-preview
       let endpoint;
-      if (config.endpoint.includes('/chat/completions') || config.endpoint.includes('/deployments')) {
-        // User provided full endpoint path
+      if (config.endpoint.includes('/chat/completions')) {
         endpoint = config.endpoint;
+      } else if (config.endpoint.includes('/openai/deployments/')) {
+        endpoint = `${config.endpoint}/chat/completions?api-version=2024-02-15-preview`;
       } else {
-        // Construct endpoint from base URL and model name
         endpoint = `${config.endpoint}/openai/deployments/${config.modelName}/chat/completions?api-version=2024-02-15-preview`;
       }
+
+      console.log('🔗 [AZURE AI] Final endpoint (Format 2):', endpoint);
       
       const response = await axios.post(
         endpoint,
@@ -75,6 +76,9 @@ class AzureAIService {
         {
           headers: {
             'Content-Type': 'application/json',
+            // Format 2 requires Authorization Bearer header
+            'Authorization': `Bearer ${config.apiKey}`,
+            // retain api-key header for backward compatibility (some deployments still require it)
             'api-key': config.apiKey
           },
           timeout: 30000
