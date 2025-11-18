@@ -20,6 +20,16 @@ class AttendanceAgent {
    */
   async handleQuery(query, chatHistory) {
     try {
+      // Console log agent ID first
+      console.log('📅 [ATTENDANCE AGENT] Processing attendance query');
+      if (azureConfig.isValid()) {
+        const config = azureConfig.getConfig();
+        console.log('📋 Agent ID (Model Name):', config.modelName);
+        console.log('🔗 Endpoint:', config.endpoint);
+      } else {
+        console.log('⚠️ Azure AI not configured - using direct response');
+      }
+      
       logger.info('Attendance agent processing query', { query: query.substring(0, 50) });
 
       const lowerQuery = query.toLowerCase();
@@ -58,6 +68,7 @@ class AttendanceAgent {
               }
             ];
 
+            console.log('📅 [ATTENDANCE AGENT] Using Azure AI for attendance query');
             const aiResponse = await azureAIService.generateResponse(enhancedHistory);
             return {
               text: `${aiResponse}\n\n---\n\n${result.text}`,
@@ -88,7 +99,7 @@ class AttendanceAgent {
           const systemMessage = {
             role: 'system',
             parts: [{ 
-              text: `You are an HR assistant helping with attendance-related queries. Here is the attendance information in a formatted way:\n\n${formattedData}\n\nWhen the user asks about their attendance, status, or records, use this data to provide accurate, helpful responses. Be conversational and friendly. If they ask to see data, you can reference this formatted information.` 
+              text: `You are an HR assistant helping with attendance-related queries. Here is the user's attendance information:\n\n${formattedData}\n\nWhen the user asks about their attendance, provide a friendly, conversational response that naturally incorporates this information. Present the data in a clear, easy-to-read format within your response. Be helpful and professional. Do NOT just repeat the raw data - explain it in a conversational way and format it nicely.` 
             }]
           };
 
@@ -98,13 +109,11 @@ class AttendanceAgent {
             ...chatHistory
           ];
 
+          console.log('📅 [ATTENDANCE AGENT] Using Azure AI for attendance query');
           const aiResponse = await azureAIService.generateResponse(enhancedHistory);
           
-          // If user explicitly asks for data, append formatted data to AI response
-          if (shouldShowData) {
-            return `${aiResponse}\n\n---\n\n${formattedData}`;
-          }
-          
+          // Azure AI should already incorporate the data in its response
+          // Only return the AI response, which should naturally include the attendance information
           return aiResponse;
         } catch (error) {
           logger.warn('Azure AI failed, using direct response', error);

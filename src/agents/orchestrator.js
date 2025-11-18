@@ -43,6 +43,7 @@ class AgentOrchestrator {
           // Use general Azure AI for conversational responses if configured
           if (azureConfig.isValid()) {
             try {
+              console.log('💬 [ORCHESTRATOR] Using Azure AI for general conversation');
               // Add system context for general conversations
               const systemMessage = {
                 role: 'system',
@@ -116,6 +117,7 @@ class AgentOrchestrator {
     // If Azure AI is configured, use it for intent detection
     if (azureConfig.isValid()) {
       try {
+        console.log('🔍 [ORCHESTRATOR] Using Azure AI for intent detection');
         const intentPrompt = `Analyze this query and respond with only one word: "leave", "holiday", or "attendance". Query: ${query}`;
         const response = await azureAIService.generateResponse([{
           role: 'user',

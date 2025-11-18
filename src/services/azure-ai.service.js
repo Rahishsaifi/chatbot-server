@@ -15,11 +15,21 @@ class AzureAIService {
   async generateResponse(chatHistory) {
     try {
       if (!azureConfig.isValid()) {
+        console.warn('⚠️ [AZURE AI] Azure AI is not configured. Skipping Azure AI call.');
         throw new Error('Azure AI Foundry is not configured. Please set environment variables.');
       }
 
       const config = azureConfig.getConfig();
+      
+      // Console log for agent ID (model name)
+      console.log('🤖 [AZURE AI] Calling Azure AI Agent');
+      console.log('📋 Agent ID (Model Name):', config.modelName);
+      console.log('🔗 Endpoint:', config.endpoint);
+      console.log('💬 Message Count:', chatHistory.length);
+      
       logger.info('Calling Azure AI Foundry', { 
+        agentId: config.modelName,
+        endpoint: config.endpoint,
         messageCount: chatHistory.length,
         hasSystemMessage: chatHistory.some(msg => msg.role === 'system')
       });
@@ -73,13 +83,27 @@ class AzureAIService {
 
       const responseText = response.data.choices[0].message.content;
       
+      // Console log for successful response
+      console.log('✅ [AZURE AI] Response received from Agent:', config.modelName);
+      console.log('📊 Tokens used:', response.data.usage?.total_tokens || 'N/A');
+      
       logger.info('Azure AI response generated', {
+        agentId: config.modelName,
         tokens: response.data.usage?.total_tokens
       });
 
       return responseText;
 
     } catch (error) {
+      // Console log for errors
+      console.error('❌ [AZURE AI] Error calling Azure AI Agent');
+      if (azureConfig.isValid()) {
+        const config = azureConfig.getConfig();
+        console.error('📋 Agent ID (Model Name):', config.modelName);
+        console.error('🔗 Endpoint:', config.endpoint);
+      }
+      console.error('❌ Error details:', error.message);
+      
       logger.error('Azure AI service error:', error);
       
       if (error.response) {

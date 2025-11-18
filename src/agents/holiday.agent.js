@@ -80,6 +80,7 @@ class HolidayAgent {
             ...chatHistory
           ];
 
+          console.log('📅 [HOLIDAY AGENT] Using Azure AI for holiday query');
           const aiResponse = await azureAIService.generateResponse(enhancedHistory);
           
           // If user explicitly asks for data, append formatted data to AI response

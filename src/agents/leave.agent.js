@@ -56,6 +56,7 @@ class LeaveAgent {
             ...chatHistory
           ];
 
+          console.log('📋 [LEAVE AGENT] Using Azure AI for leave query');
           const aiResponse = await azureAIService.generateResponse(enhancedHistory);
           
           // If user explicitly asks for data, append formatted data to AI response

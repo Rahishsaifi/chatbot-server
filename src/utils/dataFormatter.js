@@ -198,7 +198,7 @@ class DataFormatter {
     let formatted = '✅ **Attendance Regularization Submitted Successfully!**\n\n';
     formatted += `📋 **Request Details:**\n`;
     formatted += `• Request ID: ${result.recordId || 'N/A'}\n`;
-    formatted += `• Status: Pending approval from L1 Manager\n`;
+    formatted += `• Status: Under review with L1 Manager, Anamika\n`;
     formatted += `\n📧 You will receive a notification on Teams once your manager reviews the request.\n`;
     
     if (result.message) {

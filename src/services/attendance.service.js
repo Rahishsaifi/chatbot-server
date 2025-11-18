@@ -75,7 +75,7 @@ class AttendanceService {
         message: `✅ Your attendance regularization request has been submitted successfully!\n\n` +
                  `📅 Date: ${date}\n` +
                  `📝 Reason: ${reason}\n` +
-                 `⏳ Status: Pending approval from L1 Manager\n\n` +
+                 `⏳ Status: Under review with L1 Manager, Anamika\n\n` +
                  `You will receive a notification on Teams once your manager reviews the request.`,
         recordId: regularizationRecord.id
       };
